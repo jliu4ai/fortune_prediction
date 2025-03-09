@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import FortuneTeller from '../components/FortuneTeller';
+import ResultCard from '../components/ResultCard';
 
 const Index = () => {
   return (
@@ -137,7 +137,7 @@ const Index = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
-              className="text-center max-w-lg mx-auto mb-12"
+              className="text-center max-w-lg mx-auto mb-8"
             >
               <h2 className="text-3xl font-bold text-cosmic-900 dark:text-cosmic-50">常见问题</h2>
               <p className="mt-3 text-cosmic-600 dark:text-cosmic-300">
@@ -147,7 +147,7 @@ const Index = () => {
             
             <div className="max-w-3xl mx-auto">
               <motion.div 
-                className="space-y-6"
+                className="space-y-3"
                 variants={{
                   hidden: { opacity: 0 },
                   show: {
@@ -161,57 +161,30 @@ const Index = () => {
                 whileInView="show"
                 viewport={{ once: true }}
               >
-                <motion.div 
-                  className="frosted-glass rounded-xl p-6"
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
-                  }}
-                >
-                  <h3 className="text-lg font-medium text-cosmic-800 dark:text-cosmic-100 mb-2">神秘占卜是如何工作的？</h3>
-                  <p className="text-cosmic-600 dark:text-cosmic-400">
-                    我们的系统结合传统占卜智慧与现代AI技术，分析您提供的个人信息和问题，生成精准的命运解读。系统会考虑星座、生辰八字等多种因素，提供全面的预测。
-                  </p>
-                </motion.div>
+                <ResultCard 
+                  title="神秘占卜是如何工作的？" 
+                  content="我们的系统结合传统占卜智慧与现代AI技术，分析您提供的个人信息和问题，生成精准的命运解读。系统会考虑星座、生辰八字等多种因素，提供全面的预测。"
+                  collapsible
+                  defaultOpen={true}
+                />
                 
-                <motion.div 
-                  className="frosted-glass rounded-xl p-6"
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
-                  }}
-                >
-                  <h3 className="text-lg font-medium text-cosmic-800 dark:text-cosmic-100 mb-2">占卜结果准确吗？</h3>
-                  <p className="text-cosmic-600 dark:text-cosmic-400">
-                    我们的AI系统经过大量数据训练，能够提供高度个性化和参考价值的预测。然而，未来始终存在变数，占卜结果应作为指导而非绝对真理。您的选择和行动仍是决定命运的关键因素。
-                  </p>
-                </motion.div>
+                <ResultCard 
+                  title="占卜结果准确吗？" 
+                  content="我们的AI系统经过大量数据训练，能够提供高度个性化和参考价值的预测。然而，未来始终存在变数，占卜结果应作为指导而非绝对真理。您的选择和行动仍是决定命运的关键因素。"
+                  collapsible
+                />
                 
-                <motion.div 
-                  className="frosted-glass rounded-xl p-6"
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
-                  }}
-                >
-                  <h3 className="text-lg font-medium text-cosmic-800 dark:text-cosmic-100 mb-2">我的个人信息安全吗？</h3>
-                  <p className="text-cosmic-600 dark:text-cosmic-400">
-                    我们高度重视用户隐私。您提供的所有信息仅用于生成占卜结果，不会被存储或用于其他目的。我们采用先进的加密技术确保您的数据安全。
-                  </p>
-                </motion.div>
+                <ResultCard 
+                  title="我的个人信息安全吗？" 
+                  content="我们高度重视用户隐私。您提供的所有信息仅用于生成占卜结果，不会被存储或用于其他目的。我们采用先进的加密技术确保您的数据安全。"
+                  collapsible
+                />
                 
-                <motion.div 
-                  className="frosted-glass rounded-xl p-6"
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
-                  }}
-                >
-                  <h3 className="text-lg font-medium text-cosmic-800 dark:text-cosmic-100 mb-2">我可以询问任何类型的问题吗？</h3>
-                  <p className="text-cosmic-600 dark:text-cosmic-400">
-                    是的，您可以询问关于爱情、事业、健康、财富等各个方面的问题。但请注意，占卜结果仅供参考，对于重要决策，建议同时咨询专业人士的意见。
-                  </p>
-                </motion.div>
+                <ResultCard 
+                  title="我可以询问任何类型的问题吗？" 
+                  content="是的，您可以询问关于爱情、事业、健康、财富等各个方面的问题。但请注意，占卜结果仅供参考，对于重要决策，建议同时咨询专业人士的意见。"
+                  collapsible
+                />
               </motion.div>
             </div>
           </div>
