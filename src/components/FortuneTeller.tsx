@@ -55,10 +55,10 @@ const FortuneTeller = () => {
         setIsLoading(false);
       }, 2000);
     } catch (error) {
-      console.error('占卜出错:', error);
+      console.error('解读出错:', error);
       toast({
-        title: "占卜失败",
-        description: "无法获取您的命运预测，请稍后再试.",
+        title: "解读失败",
+        description: "无法获取您的运势预测，请稍后再试.",
         variant: "destructive",
       });
       setIsLoading(false);
@@ -101,10 +101,10 @@ const FortuneTeller = () => {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="category" className="text-cosmic-800 dark:text-cosmic-200">占卜类别</Label>
+                <Label htmlFor="category" className="text-cosmic-800 dark:text-cosmic-200">解读类别</Label>
                 <Select value={category} onValueChange={setCategory}>
                   <SelectTrigger className="glass-input">
-                    <SelectValue placeholder="选择占卜类别" />
+                    <SelectValue placeholder="选择解读类别" />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((cat) => (
@@ -133,7 +133,7 @@ const FortuneTeller = () => {
                 className="w-full bg-gradient-to-r from-mystic-500 to-mystic-700 hover:from-mystic-600 hover:to-mystic-800 text-white border-none relative overflow-hidden group"
               >
                 <span className="relative z-10">
-                  {isLoading ? "解读命运中..." : "开始占卜"}
+                  {isLoading ? "解读中..." : "开始解读"}
                 </span>
                 <span className="absolute inset-0 h-full w-full bg-gradient-to-r from-mystic-600 to-mystic-800 group-hover:opacity-90 opacity-0 transition-opacity duration-300"></span>
                 <span className="absolute top-0 left-1/2 -translate-x-1/2 h-px w-6 bg-white/40"></span>
@@ -147,7 +147,7 @@ const FortuneTeller = () => {
           <AnimatePresence mode="wait">
             {isLoading && (
               <ResultCard 
-                title="正在解读您的命运..." 
+                title="正在解读您的运势..." 
                 content="" 
                 isLoading={true} 
               />
@@ -179,10 +179,10 @@ const FortuneTeller = () => {
                   </div>
                 </div>
                 <h3 className="text-lg font-medium text-cosmic-800 dark:text-cosmic-200 mb-2">
-                  欢迎来到神秘占卜
+                  欢迎来到智能解读
                 </h3>
                 <p className="text-cosmic-600 dark:text-cosmic-400 max-w-md">
-                  填写左侧表格信息，我们将通过先进的AI技术为您提供个性化的命运解读。您的星座、生辰八字和具体问题都将影响您的占卜结果。
+                  填写左侧表格信息，我们将通过先进的AI技术为您提供个性化的生活解读。您的星座、生辰八字和具体问题都将影响您的解读结果。
                 </p>
               </motion.div>
             )}

@@ -34,12 +34,12 @@ const Index = () => {
                   transition={{ delay: 0.2, duration: 0.4 }}
                 >
                   <Sparkles className="h-3 w-3 mr-1" />
-                  AI驱动的命运解读
+                  AI驱动的生活指南
                 </motion.span>
               </div>
               <h1 className="mt-6 text-4xl md:text-5xl lg:text-6xl font-bold text-cosmic-900 dark:text-cosmic-50 tracking-tight drop-shadow-sm">
                 <span className="mystic-text relative inline-block">
-                  探索命运的奥秘
+                  探索前程的奥秘
                   <motion.span 
                     className="absolute -top-1 -right-2 text-yellow-300 text-sm"
                     animate={{ 
@@ -53,7 +53,7 @@ const Index = () => {
                 </span>
               </h1>
               <p className="mt-6 text-lg text-cosmic-600 dark:text-cosmic-300 max-w-2xl mx-auto">
-                老师傅携手AI科技，用现代智能与传统智慧相结合的方式，为您解析命运轨迹，洞察人生转折，<span className="font-semibold text-mystic-600">助您在人生关键时刻做出明智决策！</span>
+                老师傅携手AI科技，用现代智能与传统智慧相结合的方式，为您解析生活轨迹，洞察人生转折，<span className="font-semibold text-mystic-600">助您在人生关键时刻做出明智决策！</span>
               </p>
             </motion.div>
             
@@ -86,7 +86,7 @@ const Index = () => {
                   </div>
                   <h3 className="text-lg font-medium text-cosmic-800 dark:text-cosmic-100 mb-2">真人+AI双重解读</h3>
                   <p className="text-cosmic-600 dark:text-cosmic-400 text-sm">
-                    资深老师傅结合AI智能，多维度分析您的命理情况，准确率高达95%，看透过去，预测未来。
+                    资深老师傅结合AI智能，多维度分析您的生活情况，准确率高达95%，看透过去，预测未来。
                   </p>
                 </motion.div>
                 
@@ -138,9 +138,9 @@ const Index = () => {
               viewport={{ once: true }}
               className="text-center max-w-lg mx-auto mb-12"
             >
-              <h2 className="text-3xl font-bold text-cosmic-900 dark:text-cosmic-50">开始您的命运之旅</h2>
+              <h2 className="text-3xl font-bold text-cosmic-900 dark:text-cosmic-50">开始您的运势之旅</h2>
               <p className="mt-3 text-cosmic-600 dark:text-cosmic-300">
-                填写信息，揭开命运的面纱，掌握先机！
+                填写信息，揭开未来的面纱，掌握先机！
               </p>
             </motion.div>
             
@@ -159,7 +159,7 @@ const Index = () => {
             >
               <h2 className="text-3xl font-bold text-cosmic-900 dark:text-cosmic-50">常见问题</h2>
               <p className="mt-3 text-cosmic-600 dark:text-cosmic-300">
-                关于命理解析服务的一些常见疑问
+                关于运势解析服务的一些常见疑问
               </p>
             </motion.div>
             
@@ -180,21 +180,21 @@ const Index = () => {
                 viewport={{ once: true }}
               >
                 <ResultCard 
-                  title="神秘占卜是如何工作的？" 
-                  content="我们融合了传统命理学与现代AI技术，由专业老师傅结合人工智能分析您的八字、五行、生辰与具体问题，提供精准命运指引。系统汲取上万例真实案例的经验，准确率远超普通占卜。"
+                  title="智能解读是如何工作的？" 
+                  content="我们融合了传统知识与现代AI技术，由专业老师傅结合人工智能分析您的八字、五行、生辰与具体问题，提供精准运势指引。系统汲取上万例真实案例的经验，准确率远超普通测算。"
                   collapsible
                   defaultOpen={true}
                 />
                 
                 <ResultCard 
-                  title="占卜结果准确吗？" 
-                  content="我们的服务结合了传统命理师几十年的经验与AI的精准计算能力，准确率极高。大多数客户反馈预测与实际情况高度吻合，尤其在关键人生决策上提供了宝贵指导。当然，命运掌握在自己手中，我们的解读是指引而非决定。"
+                  title="解读结果准确吗？" 
+                  content="我们的服务结合了传统老师傅几十年的经验与AI的精准计算能力，准确率极高。大多数客户反馈预测与实际情况高度吻合，尤其在关键人生决策上提供了宝贵指导。当然，未来掌握在自己手中，我们的解读是指引而非决定。"
                   collapsible
                 />
                 
                 <ResultCard 
                   title="我的个人信息安全吗？" 
-                  content="绝对安全。您的所有信息仅用于命理分析，不会被存储或用于其他目的。我们采用银行级加密技术保护您的数据，确保隐私万无一失。"
+                  content="绝对安全。您的所有信息仅用于运势分析，不会被存储或用于其他目的。我们采用银行级加密技术保护您的数据，确保隐私万无一失。"
                   collapsible
                 />
                 
