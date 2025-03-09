@@ -13,7 +13,7 @@ interface FortuneResponse {
   content: string;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5500:/generate-report';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5500/generate-report';
 
 export const getFortune = async (request: FortuneRequest): Promise<FortuneResponse> => {
   const birthDate = new Date(request.birthdate);
