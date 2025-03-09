@@ -20,13 +20,13 @@ export const getFortune = async (request: FortuneRequest): Promise<FortuneRespon
   const zodiacSign = getZodiacSign(birthDate);
 
   try {
-    // 尝试调用后端 API
+    // 格式化输入以匹配API期望的格式
+    const input = `姓名：${request.name} 出生日期：${request.birthdate}`;
     const requestData = {
-      ...request,
-      zodiacSign,
+      input: input
     };
 
-    const response = await fetch(`${API_BASE_URL}/api/fortune`, {
+    const response = await fetch(`${API_BASE_URL}`, {  // 移除了 '/api/fortune' 路径
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
