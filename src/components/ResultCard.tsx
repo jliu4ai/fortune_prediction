@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Sparkles } from 'lucide-react';
 
 interface ResultCardProps {
   title: string;
@@ -27,30 +27,46 @@ const ResultCard: React.FC<ResultCardProps> = ({
       transition={{ duration: 0.5 }}
       className="glass-card rounded-xl overflow-hidden relative"
     >
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-mystic-400/70 via-mystic-500/70 to-mystic-600/70"></div>
+      <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-mystic-400 via-mystic-500 to-mystic-600"></div>
       
       <div className={`p-5 ${collapsible ? 'cursor-pointer' : ''}`} onClick={() => collapsible && setIsOpen(!isOpen)}>
         <h3 className="text-lg font-medium text-cosmic-800 dark:text-cosmic-100 flex items-center justify-between">
           <div className="flex items-center">
-            <span className="inline-block w-2 h-2 bg-mystic-500 rounded-full mr-2"></span>
+            <span className="relative">
+              <Sparkles className="h-4 w-4 text-mystic-500 mr-2 animate-pulse-subtle" />
+              <span className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-mystic-300 rounded-full animate-ping"></span>
+            </span>
             {title}
           </div>
           {collapsible && (
-            <ChevronDown className={`h-5 w-5 text-cosmic-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+            <motion.div
+              animate={{ rotate: isOpen ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <ChevronDown className="h-5 w-5 text-cosmic-600" />
+            </motion.div>
           )}
         </h3>
         
         {isLoading ? (
           <div className="space-y-3 mt-3">
-            <div className="h-4 bg-cosmic-200/50 dark:bg-cosmic-700/50 rounded animate-pulse"></div>
-            <div className="h-4 bg-cosmic-200/50 dark:bg-cosmic-700/50 rounded animate-pulse w-5/6"></div>
-            <div className="h-4 bg-cosmic-200/50 dark:bg-cosmic-700/50 rounded animate-pulse"></div>
-            <div className="h-4 bg-cosmic-200/50 dark:bg-cosmic-700/50 rounded animate-pulse w-4/6"></div>
+            <div className="h-4 bg-gradient-to-r from-cosmic-200/60 to-cosmic-200/30 dark:from-cosmic-700/60 dark:to-cosmic-700/30 rounded animate-shimmer"></div>
+            <div className="h-4 bg-gradient-to-r from-cosmic-200/60 to-cosmic-200/30 dark:from-cosmic-700/60 dark:to-cosmic-700/30 rounded animate-shimmer w-5/6"></div>
+            <div className="h-4 bg-gradient-to-r from-cosmic-200/60 to-cosmic-200/30 dark:from-cosmic-700/60 dark:to-cosmic-700/30 rounded animate-shimmer"></div>
+            <div className="h-4 bg-gradient-to-r from-cosmic-200/60 to-cosmic-200/30 dark:from-cosmic-700/60 dark:to-cosmic-700/30 rounded animate-shimmer w-4/6"></div>
           </div>
         ) : (
-          <div className={`prose prose-sm max-w-none text-cosmic-700 dark:text-cosmic-300 ${collapsible ? 'overflow-hidden transition-all duration-300' : ''}`} style={{ maxHeight: collapsible && !isOpen ? '0' : '500px', marginTop: collapsible && !isOpen ? '0' : '0.75rem', opacity: collapsible && !isOpen ? 0 : 1 }}>
+          <motion.div 
+            className="prose prose-sm max-w-none text-cosmic-700 dark:text-cosmic-300 overflow-hidden"
+            animate={{ 
+              maxHeight: collapsible && !isOpen ? 0 : 500,
+              marginTop: collapsible && !isOpen ? 0 : 12,
+              opacity: collapsible && !isOpen ? 0 : 1
+            }}
+            transition={{ duration: 0.3 }}
+          >
             <p className="leading-relaxed">{content}</p>
-          </div>
+          </motion.div>
         )}
       </div>
     </motion.div>
