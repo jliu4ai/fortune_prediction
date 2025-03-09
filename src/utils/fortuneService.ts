@@ -1,4 +1,3 @@
-
 // This is a mock implementation of the fortune service.
 // In a real application, this would connect to an AI service.
 
@@ -14,47 +13,77 @@ interface FortuneResponse {
   content: string;
 }
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5500';
+
 export const getFortune = async (request: FortuneRequest): Promise<FortuneResponse> => {
-  console.log('Getting fortune for:', request);
-  
-  // Calculate some "mystical" properties based on input
   const birthDate = new Date(request.birthdate);
   const zodiacSign = getZodiacSign(birthDate);
-  const nameLength = request.name.length;
+
+  try {
+    // 尝试调用后端 API
+    const requestData = {
+      ...request,
+      zodiacSign,
+    };
+
+    const response = await fetch(`${API_BASE_URL}/api/fortune`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestData),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.title && data.content) {
+        return data;
+      }
+    }
+    
+    // 如果 API 调用失败或返回格式不正确，使用本地预测
+    console.log('后端服务未响应，使用本地预测');
+    return generateLocalFortune(request, zodiacSign);
+
+  } catch (error) {
+    console.error('获取运势预测失败，使用本地预测:', error);
+    return generateLocalFortune(request, zodiacSign);
+  }
+};
+
+// 生成本地预测
+function generateLocalFortune(request: FortuneRequest, zodiacSign: string): FortuneResponse {
+  const { name, category, question } = request;
+  const nameLength = name.length;
   
-  // Determine the fortune type based on category
-  let title = '';
+  let title = `${name}的${getCategoryName(category)} - ${zodiacSign}`;
   let content = '';
-  
-  switch (request.category) {
+
+  // 根据类别生成相应的预测内容
+  switch (category) {
     case 'love':
-      title = `${request.name}的爱情运势 - ${zodiacSign}`;
       content = generateLoveFortune(nameLength, zodiacSign);
       break;
     case 'career':
-      title = `${request.name}的事业前景 - ${zodiacSign}`;
       content = generateCareerFortune(nameLength, zodiacSign);
       break;
     case 'health':
-      title = `${request.name}的健康指引 - ${zodiacSign}`;
       content = generateHealthFortune(nameLength, zodiacSign);
       break;
     case 'wealth':
-      title = `${request.name}的财富预测 - ${zodiacSign}`;
       content = generateWealthFortune(nameLength, zodiacSign);
       break;
     default:
-      title = `${request.name}的综合运势解读 - ${zodiacSign}`;
       content = generateGeneralFortune(nameLength, zodiacSign);
   }
-  
-  // If there's a specific question, add a response
-  if (request.question && request.question.trim().length > 0) {
-    content += `\n\n关于您提出的问题："${request.question}"，智慧指引显示：${generateSpecificAnswer(request.question, zodiacSign)}`;
+
+  // 如果有具体问题，添加问题的回答
+  if (question && question.trim().length > 0) {
+    content += `\n\n关于您提出的问题："${question}"，智慧指引显示：${generateSpecificAnswer(question, zodiacSign)}`;
   }
-  
+
   return { title, content };
-};
+}
 
 // Helper functions
 
@@ -76,6 +105,18 @@ function getZodiacSign(date: Date): string {
   return '双鱼座';
 }
 
+function getCategoryName(category: string): string {
+  const categories: Record<string, string> = {
+    'love': '爱情运势',
+    'career': '事业前景',
+    'health': '健康指引',
+    'wealth': '财富预测',
+    'general': '综合运势'
+  };
+  
+  return categories[category] || '运势';
+}
+
 function generateLoveFortune(nameLength: number, zodiacSign: string): string {
   const fortunes = [
     `${zodiacSign}的您近期爱情运势逐渐上升。您的魅力将在社交场合闪耀，吸引对的人注意。已有伴侣的您，关系将更加稳固，共同经历会带来更深的连结。保持真诚和开放的心态，爱情将给您带来满足和喜悦。`,
@@ -83,9 +124,7 @@ function generateLoveFortune(nameLength: number, zodiacSign: string): string {
     `指引显示，您的爱情生活即将迎来重要转折。单身的您可能在一次意外的相遇中遇到心仪对象。已有伴侣的您，关系将更加深入，有望迈向更稳定的阶段。记住，真正的爱情需要双方共同努力和理解。`
   ];
   
-  // 使用名字长度作为随机种子来选择占卜结果
-  const index = nameLength % fortunes.length;
-  return fortunes[index];
+  return fortunes[nameLength % fortunes.length];
 }
 
 function generateCareerFortune(nameLength: number, zodiacSign: string): string {
@@ -133,7 +172,6 @@ function generateGeneralFortune(nameLength: number, zodiacSign: string): string 
 }
 
 function generateSpecificAnswer(question: string, zodiacSign: string): string {
-  // 简单的问题分析，基于问题长度和关键词
   const questionLength = question.length;
   const isPositiveQuestion = question.includes('能') || question.includes('可以') || question.includes('会');
   
@@ -145,10 +183,9 @@ function generateSpecificAnswer(question: string, zodiacSign: string): string {
     `分析显示这是一个需要平衡和耐心的时期。在做出决定前，确保您已经考虑了所有可能的选项和后果。咨询您信任的人可能会带来新的视角。`
   ];
   
-  // 根据问题特性选择回答
   let index = questionLength % answers.length;
   if (isPositiveQuestion && index % 2 === 0) {
-    index = (index + 1) % answers.length; // 微调以增加变化性
+    index = (index + 1) % answers.length;
   }
   
   return answers[index];
