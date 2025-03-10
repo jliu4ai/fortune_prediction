@@ -1,4 +1,3 @@
-
 // This is a mock implementation of the fortune service.
 // In a real application, this would connect to an AI service.
 
@@ -22,31 +21,44 @@ export const getFortune = async (request: FortuneRequest): Promise<FortuneRespon
   const zodiacSign = getZodiacSign(birthDate);
 
   try {
+    console.log('Calling API with request:', request);
+    console.log('API URL:', API_BASE_URL);
+    
     // 格式化输入以匹配API期望的格式
     const input = `姓名：${request.name} 出生日期：${request.birthdate}`;
     const requestData = {
       input: input
     };
 
-    const response = await fetch(`${API_BASE_URL}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestData),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      if (data.title && data.content) {
-        return data;
+    try {
+      const response = await fetch(`${API_BASE_URL}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+        // Add a timeout to prevent hanging indefinitely
+        signal: AbortSignal.timeout(10000), // 10-second timeout
+      });
+      
+      console.log('API Response status:', response.status);
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('API Response data:', data);
+        
+        if (data.title && data.content) {
+          return data;
+        }
       }
+      
+      // If we reach here, something went wrong with the API call
+      console.log('后端服务未响应或格式不正确，使用本地预测');
+      return generateLocalFortune(request, zodiacSign);
+    } catch (fetchError) {
+      console.error('Fetch error:', fetchError);
+      return generateLocalFortune(request, zodiacSign);
     }
-    
-    // 如果 API 调用失败或返回格式不正确，使用本地预测
-    console.log('后端服务未响应，使用本地预测');
-    return generateLocalFortune(request, zodiacSign);
-
   } catch (error) {
     console.error('获取运势预测失败，使用本地预测:', error);
     return generateLocalFortune(request, zodiacSign);

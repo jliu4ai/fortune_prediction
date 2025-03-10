@@ -42,11 +42,14 @@ const FortuneTeller = () => {
       return;
     }
     
+    // Reset states before starting
     setIsLoading(true);
     setFortune(null);
     setPdfUrl(null);
     
     try {
+      console.log('开始解读运势...', { name, birthdate, category, question });
+      
       // Get fortune prediction
       const result = await getFortune({
         name,
@@ -54,6 +57,8 @@ const FortuneTeller = () => {
         category,
         question,
       });
+      
+      console.log('获取解读结果:', result);
       
       // Set fortune data immediately
       setFortune(result);
@@ -70,6 +75,10 @@ const FortuneTeller = () => {
       
       setPdfUrl(pdfData);
       
+      toast({
+        title: "解读成功",
+        description: "您的运势解读已完成",
+      });
     } catch (error) {
       console.error('解读出错:', error);
       toast({
