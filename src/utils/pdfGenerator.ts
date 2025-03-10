@@ -1,4 +1,3 @@
-
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 
@@ -21,12 +20,16 @@ export const generateFortunePDF = (data: FortuneData): string => {
   try {
     console.log("Generating PDF with data:", data);
     
-    // Create new jsPDF instance with UTF-8 encoding support
+    // Create new jsPDF instance
     const doc = new jsPDF({
       orientation: "portrait",
       unit: "mm",
       format: "a4",
     });
+
+    // 添加中文字体支持
+    doc.addFont('https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@4.5.12/files/noto-sans-sc-all-400-normal.woff', 'NotoSansSC', 'normal');
+    doc.setFont('NotoSansSC');
     
     // Set default font - using standard fonts that support Chinese
     // Make sure to use a standard PDF font that handles UTF-8
