@@ -37,7 +37,7 @@ export const getFortune = async (request: FortuneRequest): Promise<FortuneRespon
       const response = await fetch(API_BASE_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ input: "测试请求" })
+        body: JSON.stringify(requestData)
       });
       
       if (!response.ok) {
