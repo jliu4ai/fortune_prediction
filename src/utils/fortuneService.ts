@@ -15,6 +15,7 @@ interface FortuneResponse {
 
 // Use import.meta.env for Vite instead of process.env
 const API_BASE_URL = 'http://52.28.100.202:5500/generate-report';
+//const API_BASE_URL = 'http://localhost:5500/generate-report';  // 如果是在本地开发
 
 export const getFortune = async (request: FortuneRequest): Promise<FortuneResponse> => {
   console.log('getFortune called with request:', request);
@@ -33,51 +34,37 @@ export const getFortune = async (request: FortuneRequest): Promise<FortuneRespon
     console.log('Request data:', requestData);
 
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000);
-      
       const response = await fetch(API_BASE_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          // 添加CORS头
-          'Access-Control-Allow-Origin': '*'
         },
-        mode: 'cors', // 明确指定CORS模式
         body: JSON.stringify(requestData),
-        signal: controller.signal
       });
       
-      clearTimeout(timeoutId);
-      console.log('API Response status:', response.status);
-      console.log('API Response headers:', response.headers);
-      
-      if (response.ok) {
-        const data = await response.json();
-        console.log('API Response data:', data);
-        
-        if (data && data.status && data.report) {
-          console.log('API returned valid data, using it');
-          return {
-            title: `${request.name}的${getCategoryName(request.category)} - ${zodiacSign}`,
-            content: data.report
-          };
-        } else {
-          console.log('API response missing status/report, falling back to local generation');
-          return generateLocalFortune(request, zodiacSign);
-        }
-      } else {
-        console.log('API response not OK, falling back to local generation');
-        return generateLocalFortune(request, zodiacSign);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('API Error:', errorText);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    } catch (fetchError) {
-      console.error('Fetch error:', fetchError);
-      console.log('Fetch error occurred, falling back to local generation');
+
+      const data = await response.json();
+      console.log('API Response data:', data);
+      
+      if (data && data.status === "success" && data.report) {  // 检查 status 是否为 "success"
+        return {
+          title: `${request.name}的${getCategoryName(request.category)} - ${zodiacSign}`,
+          content: data.report
+        };
+      }
+      
+      return generateLocalFortune(request, zodiacSign);
+    } catch (error) {
+      console.error('API call failed:', error);
       return generateLocalFortune(request, zodiacSign);
     }
   } catch (error) {
-    console.error('获取运势预测失败，使用本地预测:', error);
+    console.error('Error in getFortune:', error);
     return generateLocalFortune(request, zodiacSign);
   }
 };
