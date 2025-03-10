@@ -14,7 +14,7 @@ interface FortuneResponse {
 }
 
 // Use import.meta.env for Vite instead of process.env
-const API_BASE_URL = 'http://52.28.100.202:5500/generate-report';
+const API_BASE_URL = '/generate-report';
 //const API_BASE_URL = 'http://localhost:5500/generate-report';  // 如果是在本地开发
 
 export const getFortune = async (request: FortuneRequest): Promise<FortuneResponse> => {
@@ -36,10 +36,8 @@ export const getFortune = async (request: FortuneRequest): Promise<FortuneRespon
     try {
       const response = await fetch(API_BASE_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ input: "测试请求" })
       });
       
       if (!response.ok) {
