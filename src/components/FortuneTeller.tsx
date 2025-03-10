@@ -47,6 +47,7 @@ const FortuneTeller = () => {
     setPdfUrl(null);
     
     try {
+      // Get fortune prediction
       const result = await getFortune({
         name,
         birthdate,
@@ -54,22 +55,21 @@ const FortuneTeller = () => {
         question,
       });
       
-      setTimeout(() => {
-        setFortune(result);
-        
-        // Generate PDF after getting fortune
-        const pdfData = generateFortunePDF({
-          name,
-          birthdate,
-          category,
-          question,
-          title: result.title,
-          content: result.content
-        });
-        
-        setPdfUrl(pdfData);
-        setIsLoading(false);
-      }, 2000);
+      // Set fortune data immediately
+      setFortune(result);
+      
+      // Generate PDF after getting fortune
+      const pdfData = generateFortunePDF({
+        name,
+        birthdate,
+        category,
+        question,
+        title: result.title,
+        content: result.content
+      });
+      
+      setPdfUrl(pdfData);
+      
     } catch (error) {
       console.error('解读出错:', error);
       toast({
@@ -77,6 +77,7 @@ const FortuneTeller = () => {
         description: "无法获取您的运势预测，请稍后再试.",
         variant: "destructive",
       });
+    } finally {
       setIsLoading(false);
     }
   };

@@ -1,3 +1,4 @@
+
 // This is a mock implementation of the fortune service.
 // In a real application, this would connect to an AI service.
 
@@ -13,7 +14,8 @@ interface FortuneResponse {
   content: string;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5500/generate-report';
+// Use import.meta.env for Vite instead of process.env
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5500/generate-report';
 
 export const getFortune = async (request: FortuneRequest): Promise<FortuneResponse> => {
   const birthDate = new Date(request.birthdate);
@@ -26,7 +28,7 @@ export const getFortune = async (request: FortuneRequest): Promise<FortuneRespon
       input: input
     };
 
-    const response = await fetch(`${API_BASE_URL}`, {  // 移除了 '/api/fortune' 路径
+    const response = await fetch(`${API_BASE_URL}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
