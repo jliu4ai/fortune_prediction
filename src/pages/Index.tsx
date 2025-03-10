@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import Header from '../components/Header';
@@ -39,7 +38,7 @@ const Index = () => {
               </div>
               <h1 className="mt-6 text-4xl md:text-5xl lg:text-6xl font-bold text-cosmic-900 dark:text-cosmic-50 tracking-tight drop-shadow-sm">
                 <span className="mystic-text relative inline-block">
-                  探索前程的奥秘
+                  解读运势的奥秘
                   <motion.span 
                     className="absolute -top-1 -right-2 text-yellow-300 text-sm"
                     animate={{ 

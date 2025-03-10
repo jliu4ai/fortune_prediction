@@ -7,8 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FileDown, Wand2 } from 'lucide-react';
 import ResultCard from './ResultCard';
 import { getFortune } from '../utils/fortuneService';
+import { generateFortunePDF } from '../utils/pdfGenerator';
 
 const categories = [
   { id: 'love', name: '爱情' },
@@ -26,6 +28,7 @@ const FortuneTeller = () => {
   const [question, setQuestion] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [fortune, setFortune] = useState<{ title: string; content: string } | null>(null);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,6 +44,7 @@ const FortuneTeller = () => {
     
     setIsLoading(true);
     setFortune(null);
+    setPdfUrl(null);
     
     try {
       const result = await getFortune({
@@ -52,6 +56,18 @@ const FortuneTeller = () => {
       
       setTimeout(() => {
         setFortune(result);
+        
+        // Generate PDF after getting fortune
+        const pdfData = generateFortunePDF({
+          name,
+          birthdate,
+          category,
+          question,
+          title: result.title,
+          content: result.content
+        });
+        
+        setPdfUrl(pdfData);
         setIsLoading(false);
       }, 2000);
     } catch (error) {
@@ -63,6 +79,23 @@ const FortuneTeller = () => {
       });
       setIsLoading(false);
     }
+  };
+
+  const handleDownloadPDF = () => {
+    if (!pdfUrl) return;
+    
+    // Create an invisible link element and trigger download
+    const link = document.createElement('a');
+    link.href = pdfUrl;
+    link.download = `${name}-运势解读报告.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast({
+      title: "下载成功",
+      description: "运势解读报告已成功下载.",
+    });
   };
 
   return (
@@ -132,8 +165,9 @@ const FortuneTeller = () => {
                 disabled={isLoading}
                 className="w-full bg-gradient-to-r from-mystic-500 to-mystic-700 hover:from-mystic-600 hover:to-mystic-800 text-white border-none relative overflow-hidden group"
               >
-                <span className="relative z-10">
+                <span className="relative z-10 flex items-center">
                   {isLoading ? "解读中..." : "开始解读"}
+                  <Wand2 className="ml-2 h-4 w-4" />
                 </span>
                 <span className="absolute inset-0 h-full w-full bg-gradient-to-r from-mystic-600 to-mystic-800 group-hover:opacity-90 opacity-0 transition-opacity duration-300"></span>
                 <span className="absolute top-0 left-1/2 -translate-x-1/2 h-px w-6 bg-white/40"></span>
@@ -154,10 +188,28 @@ const FortuneTeller = () => {
             )}
             
             {!isLoading && fortune && (
-              <ResultCard 
-                title={fortune.title} 
-                content={fortune.content} 
-              />
+              <div className="space-y-4">
+                <ResultCard 
+                  title={fortune.title} 
+                  content={fortune.content} 
+                />
+                
+                {pdfUrl && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.2 }}
+                  >
+                    <Button 
+                      onClick={handleDownloadPDF}
+                      className="w-full bg-cosmic-100 hover:bg-cosmic-200 text-cosmic-900 border border-cosmic-300 flex items-center justify-center gap-2 group"
+                    >
+                      <FileDown className="h-4 w-4 text-cosmic-600 group-hover:text-cosmic-800 transition-colors" />
+                      <span>下载运势解读报告 (PDF)</span>
+                    </Button>
+                  </motion.div>
+                )}
+              </div>
             )}
             
             {!isLoading && !fortune && (
