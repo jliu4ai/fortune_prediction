@@ -29,6 +29,9 @@ export const getFortune = async (request: FortuneRequest): Promise<FortuneRespon
       input: input
     };
 
+    console.log('Sending request to API:', API_BASE_URL);
+    console.log('Request data:', requestData);
+
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 8000);
@@ -37,13 +40,18 @@ export const getFortune = async (request: FortuneRequest): Promise<FortuneRespon
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          // 添加CORS头
+          'Access-Control-Allow-Origin': '*'
         },
+        mode: 'cors', // 明确指定CORS模式
         body: JSON.stringify(requestData),
         signal: controller.signal
       });
       
       clearTimeout(timeoutId);
       console.log('API Response status:', response.status);
+      console.log('API Response headers:', response.headers);
       
       if (response.ok) {
         const data = await response.json();
