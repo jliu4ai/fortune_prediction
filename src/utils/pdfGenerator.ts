@@ -68,7 +68,10 @@ export const generateFortunePDF = (data: FortuneData): string => {
   doc.text(splitContent, 20, yPosition + 15);
   
   // Add footer
-  const pageCount = doc.internal.getNumberOfPages();
+  // In jsPDF v3.0.0, getNumberOfPages is no longer available
+  // Use doc.getNumberOfPages() as a method call instead of internal.getNumberOfPages
+  // or use the doc.internal.pages.length - 1 to get the page count
+  const pageCount = doc.internal.pages.length - 1;
   doc.setFontSize(10);
   doc.setTextColor(150, 150, 150);
   for (let i = 1; i <= pageCount; i++) {
