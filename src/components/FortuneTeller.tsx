@@ -23,6 +23,8 @@ const FortuneTeller = () => {
   const { toast } = useToast();
   const [name, setName] = useState('');
   const [birthdate, setBirthdate] = useState('');
+  const [birthtime, setBirthtime] = useState('');
+  const [birthplace, setBirthplace] = useState('');
   const [category, setCategory] = useState('general');
   const [question, setQuestion] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -33,10 +35,10 @@ const FortuneTeller = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!name || !birthdate) {
+    if (!name || !birthdate || !birthtime || !birthplace) {
       toast({
         title: "信息不完整",
-        description: "请填写您的姓名和出生日期.",
+        description: "请填写您的姓名、出生日期、出生时间和出生地点。",
         variant: "destructive",
       });
       return;
@@ -49,12 +51,14 @@ const FortuneTeller = () => {
     setPdfError(null);
     
     try {
-      console.log('开始解读运势...', { name, birthdate, category, question });
+      console.log('开始解读运势...', { name, birthdate, birthtime, birthplace, category, question });
       
       // Get fortune prediction
       const result = await getFortune({
         name,
         birthdate,
+        birthtime,
+        birthplace,
         category,
         question,
       });
@@ -70,6 +74,8 @@ const FortuneTeller = () => {
         const pdfData = generateFortunePDF({
           name,
           birthdate,
+          birthtime,
+          birthplace,
           category,
           question,
           title: result.title,
@@ -167,6 +173,30 @@ const FortuneTeller = () => {
                   type="date" 
                   value={birthdate}
                   onChange={(e) => setBirthdate(e.target.value)}
+                  className="glass-input"
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="birthtime" className="text-cosmic-800 dark:text-cosmic-200">出生时间</Label>
+                <Input 
+                  id="birthtime" 
+                  type="time" 
+                  value={birthtime}
+                  onChange={(e) => setBirthtime(e.target.value)}
+                  className="glass-input"
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="birthplace" className="text-cosmic-800 dark:text-cosmic-200">出生地点</Label>
+                <Input 
+                  id="birthplace" 
+                  value={birthplace}
+                  onChange={(e) => setBirthplace(e.target.value)}
+                  placeholder="请输入出生地点（如：北京市海淀区）"
                   className="glass-input"
                   required
                 />
