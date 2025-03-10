@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from "@/components/ui/use-toast";
@@ -29,6 +28,7 @@ const FortuneTeller = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [fortune, setFortune] = useState<{ title: string; content: string } | null>(null);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [pdfError, setPdfError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,6 +46,7 @@ const FortuneTeller = () => {
     setIsLoading(true);
     setFortune(null);
     setPdfUrl(null);
+    setPdfError(null);
     
     try {
       console.log('开始解读运势...', { name, birthdate, category, question });
@@ -64,16 +65,28 @@ const FortuneTeller = () => {
       setFortune(result);
       
       // Generate PDF after getting fortune
-      const pdfData = generateFortunePDF({
-        name,
-        birthdate,
-        category,
-        question,
-        title: result.title,
-        content: result.content
-      });
-      
-      setPdfUrl(pdfData);
+      try {
+        console.log('开始生成PDF...');
+        const pdfData = generateFortunePDF({
+          name,
+          birthdate,
+          category,
+          question,
+          title: result.title,
+          content: result.content
+        });
+        
+        console.log('PDF生成成功');
+        setPdfUrl(pdfData);
+      } catch (pdfError) {
+        console.error('PDF生成失败:', pdfError);
+        setPdfError('无法生成PDF报告，但您仍可查看在线解读结果。');
+        toast({
+          title: "PDF生成失败",
+          description: "无法生成PDF报告，但您仍可查看在线解读结果。",
+          variant: "destructive",
+        });
+      }
       
       toast({
         title: "解读成功",
@@ -92,20 +105,36 @@ const FortuneTeller = () => {
   };
 
   const handleDownloadPDF = () => {
-    if (!pdfUrl) return;
+    if (!pdfUrl) {
+      toast({
+        title: "无法下载",
+        description: "PDF报告尚未生成，请稍后再试。",
+        variant: "destructive",
+      });
+      return;
+    }
     
-    // Create an invisible link element and trigger download
-    const link = document.createElement('a');
-    link.href = pdfUrl;
-    link.download = `${name}-运势解读报告.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    toast({
-      title: "下载成功",
-      description: "运势解读报告已成功下载.",
-    });
+    try {
+      // Create an invisible link element and trigger download
+      const link = document.createElement('a');
+      link.href = pdfUrl;
+      link.download = `${name}-运势解读报告.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({
+        title: "下载成功",
+        description: "运势解读报告已成功下载.",
+      });
+    } catch (error) {
+      console.error('下载PDF出错:', error);
+      toast({
+        title: "下载失败",
+        description: "无法下载PDF报告，请稍后再试.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -203,6 +232,17 @@ const FortuneTeller = () => {
                   title={fortune.title} 
                   content={fortune.content} 
                 />
+                
+                {pdfError && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.2 }}
+                    className="p-3 bg-amber-50 border border-amber-200 rounded-md text-amber-700 text-sm"
+                  >
+                    {pdfError}
+                  </motion.div>
+                )}
                 
                 {pdfUrl && (
                   <motion.div

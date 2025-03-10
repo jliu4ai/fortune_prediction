@@ -17,10 +17,12 @@ interface FortuneResponse {
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5500/generate-report';
 
 export const getFortune = async (request: FortuneRequest): Promise<FortuneResponse> => {
+  console.log('getFortune called with request:', request);
   const birthDate = new Date(request.birthdate);
   const zodiacSign = getZodiacSign(birthDate);
 
   try {
+    // Try to get fortune from the API first
     console.log('Calling API with request:', request);
     console.log('API URL:', API_BASE_URL);
     
@@ -31,15 +33,21 @@ export const getFortune = async (request: FortuneRequest): Promise<FortuneRespon
     };
 
     try {
+      // Set a shorter timeout to prevent hanging
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000); // 8-second timeout
+      
       const response = await fetch(`${API_BASE_URL}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(requestData),
-        // Add a timeout to prevent hanging indefinitely
-        signal: AbortSignal.timeout(10000), // 10-second timeout
+        signal: controller.signal
       });
+      
+      // Clear the timeout
+      clearTimeout(timeoutId);
       
       console.log('API Response status:', response.status);
       
@@ -47,16 +55,20 @@ export const getFortune = async (request: FortuneRequest): Promise<FortuneRespon
         const data = await response.json();
         console.log('API Response data:', data);
         
-        if (data.title && data.content) {
+        if (data && data.title && data.content) {
+          console.log('API returned valid data, using it');
           return data;
+        } else {
+          console.log('API response missing title/content, falling back to local generation');
+          return generateLocalFortune(request, zodiacSign);
         }
+      } else {
+        console.log('API response not OK, falling back to local generation');
+        return generateLocalFortune(request, zodiacSign);
       }
-      
-      // If we reach here, something went wrong with the API call
-      console.log('后端服务未响应或格式不正确，使用本地预测');
-      return generateLocalFortune(request, zodiacSign);
     } catch (fetchError) {
       console.error('Fetch error:', fetchError);
+      console.log('Fetch error occurred, falling back to local generation');
       return generateLocalFortune(request, zodiacSign);
     }
   } catch (error) {
@@ -67,6 +79,7 @@ export const getFortune = async (request: FortuneRequest): Promise<FortuneRespon
 
 // 生成本地预测
 function generateLocalFortune(request: FortuneRequest, zodiacSign: string): FortuneResponse {
+  console.log('Generating local fortune for', request.name, 'with zodiac sign', zodiacSign);
   const { name, category, question } = request;
   const nameLength = name.length;
   
@@ -96,6 +109,7 @@ function generateLocalFortune(request: FortuneRequest, zodiacSign: string): Fort
     content += `\n\n关于您提出的问题："${question}"，智慧指引显示：${generateSpecificAnswer(question, zodiacSign)}`;
   }
 
+  console.log('Local fortune generation complete:', { title, contentLength: content.length });
   return { title, content };
 }
 

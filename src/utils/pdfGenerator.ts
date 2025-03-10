@@ -18,71 +18,88 @@ interface FortuneData {
 }
 
 export const generateFortunePDF = (data: FortuneData): string => {
-  const doc = new jsPDF();
-  
-  // Add default Chinese font to jsPDF
-  // Using the NotoSansSC font which is included in jsPDF 3.0
-  doc.addFont("https://fonts.googleapis.com/css2?family=Noto+Sans+SC&display=swap", "NotoSansSC", "normal");
-  doc.setFont("NotoSansSC");
-  
-  // Add document title
-  doc.setFontSize(20);
-  doc.setTextColor(0, 0, 128);
-  doc.text("运势解读报告", 105, 20, { align: "center" });
-  
-  // Add creation date
-  const today = new Date();
-  doc.setFontSize(10);
-  doc.setTextColor(100, 100, 100);
-  doc.text(
-    `生成日期: ${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`,
-    105, 
-    30, 
-    { align: "center" }
-  );
-  
-  // Add decorative line
-  doc.setDrawColor(120, 100, 200);
-  doc.setLineWidth(0.5);
-  doc.line(20, 35, 190, 35);
-  
-  // Add user information
-  doc.setFontSize(12);
-  doc.setTextColor(0, 0, 0);
-  doc.text(`姓名: ${data.name}`, 20, 45);
-  doc.text(`出生日期: ${data.birthdate}`, 20, 55);
-  doc.text(`解读类别: ${getCategoryName(data.category)}`, 20, 65);
-  
-  if (data.question) {
-    doc.text("您的问题:", 20, 75);
-    // Handle long questions with wrapping
-    const splitQuestion = doc.splitTextToSize(data.question, 170);
-    doc.text(splitQuestion, 20, 85);
+  try {
+    console.log("Generating PDF with data:", data);
+    
+    // Create new jsPDF instance with UTF-8 encoding support
+    const doc = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4",
+    });
+    
+    // Set default font - using standard fonts that support Chinese
+    // Make sure to use a standard PDF font that handles UTF-8
+    doc.setFont("helvetica");
+    
+    // Add document title
+    doc.setFontSize(20);
+    doc.setTextColor(0, 0, 128);
+    // Use the Unicode characters directly
+    const title = "运势解读报告";
+    doc.text(title, 105, 20, { align: "center" });
+    
+    // Add creation date
+    const today = new Date();
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text(
+      `生成日期: ${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`,
+      105, 
+      30, 
+      { align: "center" }
+    );
+    
+    // Add decorative line
+    doc.setDrawColor(120, 100, 200);
+    doc.setLineWidth(0.5);
+    doc.line(20, 35, 190, 35);
+    
+    // Add user information
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`姓名: ${data.name}`, 20, 45);
+    doc.text(`出生日期: ${data.birthdate}`, 20, 55);
+    doc.text(`解读类别: ${getCategoryName(data.category)}`, 20, 65);
+    
+    let yPos = 75;
+    
+    if (data.question) {
+      doc.text("您的问题:", 20, yPos);
+      yPos += 10;
+      // Handle long questions with wrapping
+      const splitQuestion = doc.splitTextToSize(data.question, 170);
+      doc.text(splitQuestion, 20, yPos);
+      yPos += splitQuestion.length * 7;
+    }
+    
+    // Add result title
+    doc.setFontSize(16);
+    doc.setTextColor(70, 50, 120);
+    doc.text(data.title, 105, yPos, { align: "center" });
+    
+    // Add result content
+    doc.setFontSize(12);
+    doc.setTextColor(50, 50, 50);
+    const splitContent = doc.splitTextToSize(data.content, 170);
+    doc.text(splitContent, 20, yPos + 15);
+    
+    // Add footer
+    const pageCount = doc.internal.pages.length - 1;
+    doc.setFontSize(10);
+    doc.setTextColor(150, 150, 150);
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.text('由AI智能运势解读生成 - 仅供参考', 105, 285, { align: 'center' });
+    }
+    
+    console.log("PDF generation completed successfully");
+    // Return the PDF as a data URL
+    return doc.output('dataurlstring');
+  } catch (error) {
+    console.error("PDF generation error:", error);
+    throw new Error("PDF生成失败");
   }
-  
-  // Add result title
-  const yPosition = data.question ? 95 + (Math.floor(data.question.length / 50) * 5) : 80;
-  doc.setFontSize(16);
-  doc.setTextColor(70, 50, 120);
-  doc.text(data.title, 105, yPosition, { align: "center" });
-  
-  // Add result content
-  doc.setFontSize(12);
-  doc.setTextColor(50, 50, 50);
-  const splitContent = doc.splitTextToSize(data.content, 170);
-  doc.text(splitContent, 20, yPosition + 15);
-  
-  // Add footer
-  const pageCount = doc.internal.pages.length - 1;
-  doc.setFontSize(10);
-  doc.setTextColor(150, 150, 150);
-  for (let i = 1; i <= pageCount; i++) {
-    doc.setPage(i);
-    doc.text('由AI智能运势解读生成 - 仅供参考', 105, 285, { align: 'center' });
-  }
-  
-  // Return the PDF as a data URL
-  return doc.output('dataurlstring');
 };
 
 // Helper function to get the Chinese name of the category
