@@ -25,9 +25,14 @@ export const getFortune = async (request: FortuneRequest): Promise<FortuneRespon
   try {
     // 格式化日期以匹配后端期望的格式
     const formattedDate = `${request.birthdate.split('-')[0]}年${request.birthdate.split('-')[1]}月${request.birthdate.split('-')[2]}`;
-    const input = `姓名：${request.name} 出生日期: ${formattedDate}`;
+    const categoryText = getCategoryName(request.category); // 获取中文类别名称
+    const input = `姓名：${request.name} 出生日期: ${formattedDate} 类别：${categoryText}`;
+    
+    // 如果有具体问题，也加入到请求中
     const requestData = {
-      input: input
+      input: input,
+      category: request.category,
+      question: request.question || ''
     };
 
     console.log('Sending request to API:', API_BASE_URL);
