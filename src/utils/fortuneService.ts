@@ -25,21 +25,19 @@ export const getFortune = async (request: FortuneRequest): Promise<FortuneRespon
   const zodiacSign = getZodiacSign(birthDate);
 
   try {
-    // 分别格式化日期和时间
+    // 格式化所有信息到 input 字段中
     const formattedDate = `${request.birthdate.split('-')[0]}年${request.birthdate.split('-')[1]}月${request.birthdate.split('-')[2]}日`;
     const formattedTime = request.birthtime ? `${request.birthtime}时` : '';
     const categoryText = getCategoryName(request.category);
     
-    // 分开显示出生日期和出生时间
+    // 将所有信息整合到 input 字段
     const input = `姓名：${request.name}\n出生日期：${formattedDate}\n出生时间：${formattedTime}\n出生地点：${request.birthplace}\n类别：${categoryText}`;
     
+    // 只发送后端需要的三个字段
     const requestData = {
       input: input,
       category: request.category,
-      question: request.question || '',
-      birthdate: request.birthdate,
-      birthtime: request.birthtime,
-      birthplace: request.birthplace
+      question: request.question || ''
     };
 
     console.log('Sending request to API:', API_BASE_URL);
