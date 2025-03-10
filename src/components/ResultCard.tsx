@@ -58,7 +58,7 @@ const ResultCard: React.FC<ResultCardProps> = ({
         ) : (
           <motion.div 
             className="prose prose-sm max-w-none text-cosmic-700 dark:text-cosmic-300 overflow-hidden"
-            initial={{ height: collapsible && !isOpen ? 0 : "auto" }}
+            initial={collapsible ? { height: isOpen ? "auto" : 0 } : { height: "auto" }}
             animate={{ 
               height: collapsible && !isOpen ? 0 : "auto",
               marginTop: collapsible && !isOpen ? 0 : 12,

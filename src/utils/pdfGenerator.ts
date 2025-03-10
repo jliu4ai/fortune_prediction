@@ -20,6 +20,11 @@ interface FortuneData {
 export const generateFortunePDF = (data: FortuneData): string => {
   const doc = new jsPDF();
   
+  // Add default Chinese font to jsPDF
+  // Using the NotoSansSC font which is included in jsPDF 3.0
+  doc.addFont("https://fonts.googleapis.com/css2?family=Noto+Sans+SC&display=swap", "NotoSansSC", "normal");
+  doc.setFont("NotoSansSC");
+  
   // Add document title
   doc.setFontSize(20);
   doc.setTextColor(0, 0, 128);
@@ -68,9 +73,6 @@ export const generateFortunePDF = (data: FortuneData): string => {
   doc.text(splitContent, 20, yPosition + 15);
   
   // Add footer
-  // In jsPDF v3.0.0, getNumberOfPages is no longer available
-  // Use doc.getNumberOfPages() as a method call instead of internal.getNumberOfPages
-  // or use the doc.internal.pages.length - 1 to get the page count
   const pageCount = doc.internal.pages.length - 1;
   doc.setFontSize(10);
   doc.setTextColor(150, 150, 150);
