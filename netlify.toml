@@ -3,4 +3,4 @@ from = "/generate-report"
 to = "http://52.28.100.202:5500/generate-report"
 status = 200
 force = true
-timeout = 60
+timeout = 120
